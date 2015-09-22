@@ -9,20 +9,16 @@ import (
 	"log"
 	"math/big"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
 	"github.com/ethereum/ethash"
 	"github.com/ethereum/go-ethereum/common"
-
 	"github.com/gorilla/mux"
-
-	"github.com/syndtr/goleveldb/leveldb"
 )
 
-var levelDB *leveldb.DB
 
 var currWork *ResponseArray = nil
 
@@ -46,6 +42,7 @@ var pow256 = common.BigPow(2, 256)
 
 var hasher = ethash.New()
 
+var secret = "CHANGETHIS!"
 var poolPort = "5082"
 var ethereumPort = "8545" //8545 = geth, 8080 = eth (requires dev branch when using eth client)
 
@@ -98,16 +95,6 @@ func main() {
 	logInfo.Println("Welcome to ethpool 2.0")
 	logInfo.Println("Pool port is", poolPort)
 	logInfo.Println("Point your miners to: http://<ip>:" + poolPort + "/miner/{miner}/{difficulty}")
-
-	// Open the share database
-	var err error
-
-	levelDB, err = leveldb.OpenFile("~/ethpool_shares.db", nil)
-	if err != nil {
-		logError.Println("Unable to open leveldb connection:", err)
-		return
-	}
-	defer levelDB.Close()
 
 	go updateWork()
 	go updatePendingBlock()
@@ -211,13 +198,8 @@ func handleMiner(rw http.ResponseWriter, req *http.Request) {
 				logInfo.Println("###########################################################################")
 			}
 
-			share := `MIX:` + mixDigest + `|MINER:"` + miner + `|DIFFICULTY:` + strconv.FormatInt(minerAdjustedDifficulty, 10) + `|WORKER:` + worker
 			logInfo.Println("Miner", miner, ".", worker, "found valid share (Diff:", minerAdjustedDifficulty, "Mix:", mixDigest, "Hash:", hashNoNonce, "Nonce:", nonce, ")")
-			err = levelDB.Put([]byte(mixDigest), []byte(share), nil)
-
-			if err != nil {
-				logError.Println("Error inserting share into database:", err)
-			}
+			http.PostForm("http://localhost:5000/submit", url.Values{"secret": {secret}, "mixdigest": {mixDigest}, "miner": {miner}, "diff": {strconv.FormatInt(minerAdjustedDifficulty, 10)}, "worker": {worker}})
 		} else {
 			logError.Println("Miner", miner, "provided invalid share")
 			fmt.Fprint(rw, getErrorResponse("Provided PoW solution is invalid!"))
@@ -280,7 +262,7 @@ func submitWork(params []interface{}) {
 
 func submitShares() {
 	for true {
-		iter := levelDB.NewIterator(nil, nil)
+		/*iter := levelDB.NewIterator(nil, nil)
 		for iter.Next() {
 			key := iter.Key()
 			value := iter.Value()
@@ -291,7 +273,7 @@ func submitShares() {
 		err := iter.Error()
 		if err != nil {
 			logError.Println("Error itarating shares:", err)
-		}
+		}*/
 		time.Sleep(time.Second * 10)
 	}
 }
@@ -357,6 +339,8 @@ func callArray(method string, params []interface{}) (*ResponseArray, error) {
 	// fmt.Println("done")
 	return res, nil
 }
+
+
 
 func callBool(method string, params []interface{}) (*ResponseBool, error) {
 	url := "http://localhost:" + ethereumPort
