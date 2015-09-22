@@ -19,6 +19,7 @@ The software is not well tested and it's a work in progress, use at your own ris
 ## Configuration
 
 For first, configure the pool master:
+
 1. Open poolmaster/pool.go
 2. Choose a secure key, and replace the one proposed in line 46
 3. Set the poolPort at line 46; this will be used by pool miners
@@ -26,6 +27,7 @@ For first, configure the pool master:
 5. Enter the ethpool.py directory and run ``` ./make_poolmaster.sh ```
 
 Now edit ethpool.py:
+
 1. At line 15, set the previously secure key
 2. At line 21, set the pool fee
 3. At line 22, set your coinbase address
