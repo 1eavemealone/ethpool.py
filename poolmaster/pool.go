@@ -42,7 +42,7 @@ var pow256 = common.BigPow(2, 256)
 
 var hasher = ethash.New()
 
-var secret = "CHANGETHIS!"
+var secret = "CHANGETHIS"
 var poolPort = "5082"
 var ethereumPort = "8545" //8545 = geth, 8080 = eth (requires dev branch when using eth client)
 
@@ -196,6 +196,7 @@ func handleMiner(rw http.ResponseWriter, req *http.Request) {
 				logInfo.Println("###########################################################################")
 				logInfo.Println("################################Block found################################")
 				logInfo.Println("###########################################################################")
+				http.PostForm("http://localhost:5000/foundblock", url.Values{})
 			}
 
 			logInfo.Println("Miner", miner, ".", worker, "found valid share (Diff:", minerAdjustedDifficulty, "Mix:", mixDigest, "Hash:", hashNoNonce, "Nonce:", nonce, ")")

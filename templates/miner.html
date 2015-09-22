@@ -20,58 +20,45 @@
 </nav>
 
 <div class="container" style="margin-top: 90px" role="main">	
-	<h1>Pool summary</h1>
+	<h1>Miner details</h1>
 
-	
-		<div class="panel panel-default">
-		  <div class="panel-body">
-			You need to have a working ethminer installation which comes with the c++ eth version of Ethereum. For installation instructions see ethereum.org/cli.
-			<br>
-			To join the pool start up ethminer using the -F flag and point it to the following address: <i>http://{{ server }}/account/hashrate</i>
-			<br>Where <b>Account</b> is your ethereum address and <b>Hashrate</b> is your hashrate in MHS (0.1 = 100KHS)
-		  </div>
-		</div>
 	<div align="center">
-
 		<div class="row">
-			<form method="POST" action="miner">
-				<div class="col-md-9">
-					<input class="form-control" id="address" name="address" value="Insert a miner address..." type="text">
+			<div class="col-md-6">
+				<div class="panel panel-primary">
+				  <div class="panel-heading">
+				    <h3 class="panel-title">Address</h3>
+				  </div>
+				  <div class="panel-body">
+				    {{ address }}
+				  </div>
 				</div>
-				<div class="col-md-3">
-					<input class="btn btn-primary btn-block" type="submit" value="Go"></input>
-				</div>
-			</form>
-
-			<div class="col-md-12">
-				<br>
 			</div>
+
 			<div class="col-md-6">
 				<div class="panel panel-warning">
 				  <div class="panel-heading">
 				    <h3 class="panel-title">Round work</h3>
 				  </div>
 				  <div class="panel-body">
-				    {{ cround['shares'] }}
+				    {{ shares }}
 				  </div>
 				</div>
 			</div>
 
-			<div class="col-md-6">
-				<div class="panel panel-danger">
-				  <div class="panel-heading">
-				    <h3 class="panel-title">Round miners</h3>
-				  </div>
-				  <div class="panel-body">
-				     {{ cround['miners'] }}
-				  </div>
-				</div>
-			</div>
 		</div>
+
+		<table class="table">
+		{% for payout in payouts %}
+		    <tr>{{ payout }}</tr>
+		{% endfor %}
+		</table>
+
 	</div>
 </div>
 <br>
 <footer>
+<div align="center">Footer</div>
 <div align="center">
 	This software is made by Davide Gessa and it's release as open-source with MIT license (<a href="https://github.com/dakk/ethpool.py">Github</a>, <a href="mailto:gessadavide@gmail.com">Mail</a>).<br>
 	Consider to make a small donation to <a href="https://etherchain.org/account/0x18f081247ad32af38404d071eb8c246cc4f33534">0x18f081247ad32af38404d071eb8c246cc4f33534</a>

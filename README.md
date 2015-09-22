@@ -1,30 +1,43 @@
-# Introduction
-We have decided to open source our implementation of pooled mining for Ethereum. This software is not a complete mining pool. It only takes care of work distribution and share validation; valid shares are stored into a local database (LevelDB). Reward calculation and payments are not yet implemented but it should be possible to connect this software some of the  existing open source mining pools.
+# Pool server
 
-# Performance
-While the current implementation in go might not be the most effective one, the pool was able to process ~600 workers at 30% CPU utilization (1 core) and 70MB RAM usage.
+This software includes:
+* A pool master for miner handling
+* A pool controller
 
-# Supported clients
-The pool has been tested successfully with both the go Ethereum client (geth) and the cpp Ethereum client (eth).
+## Warning
 
-# Pull requests & possible optimizations
-If you find any issues with the pool software please feel free to issue a pull request.
+The software is not well tested and it's a work in progress, use at your own risk.
 
-If you want to improve the pool, implementing the connection to geth via IPC instead of HTTP would be a good start.
+## Requirements
 
-# Setup guide (Ubuntu 14.04)
-* Install go according to https://github.com/ethereum/go-ethereum/wiki/Installing-Go#ubuntu-1404
-* Put the pool.go file into your gopath
-* Run go get to download the dependencies
-* Adjust the ports to match your environment (poolPort and ethereumPort)
-* Start your Ethereum client & enable RPC
-* Run go build pool.go
-* Start the pool server ./pool
-* Point your miner to http://ip:port/miner/\<account\>.\<worker\>/\<hashrate\>
+* golang
+* python2
+* python2 flask
+* python2 requests
+* python2 pysqlite3
 
-# Donations
+## Configuration
+
+For first, configure the pool master:
+1. Open poolmaster/pool.go
+2. Choose a secure key, and replace the one proposed in line 46
+3. Set the poolPort at line 46; this will be used by pool miners
+4. Set the port of your ethereum daemon at line 47
+5. Enter the ethpool.py directory and run ``` ./make_poolmaster.sh ```
+
+Now edit ethpool.py:
+1. At line 15, set the previously secure key
+2. At line 21, set the pool fee
+3. At line 22, set your coinbase address
+
+## Startup
+
+1. Start geth or similar with rpc ``` geth --rpc ```
+2. First run ``` ./poolmaster/pool ```
+3. Start the pool server with ``` python ethpool.py ```
+
+## Donations
 Donations are always welcome:
 
-BTC: 37rfj6oPJmnEDHTnUxvsUEmF4CnqofgWJr
-
-ETH: 0xc5d2dd8b399b67d857ed6d91bbe26f0702f7cd34
+BTC: 13TRVwiqLMveg9aPAmZgcAix5ogKVgpe4T
+ETH: 0x18f081247ad32af38404d071eb8c246cc4f33534
