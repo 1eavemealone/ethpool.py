@@ -111,7 +111,7 @@ def db_thread ():
 		# New block, split the reward
 		if bl:
 			bl = False
-			bllock.realease ()
+			bllock.release ()
 
 			accounts = {}
 			totshare = 0
