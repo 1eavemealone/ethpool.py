@@ -111,7 +111,7 @@ def db_thread ():
 		# New block, split the reward
 		if bl:
 			bl = False
-			bllock.realease ()
+			bllock.release ()
 
 			accounts = {}
 			totshare = 0
@@ -139,7 +139,7 @@ def db_thread ():
 			cround = {'shares': 0, 'accounts': {}, 'miners': 0}
 			croundlock.release ()
 		else:
-			bllock.realease ()
+			bllock.release ()
 
 	conn.close ()
 
